@@ -1,0 +1,10 @@
+{
+  "name": "@marko/react-test-utils",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "peerDependencies": {
+    "react": "*",
+    "enzyme": "*",
+    "react-magnetic-di": "*"
+  }
+}
