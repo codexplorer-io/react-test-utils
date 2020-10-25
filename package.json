@@ -1,5 +1,5 @@
 {
-  "name": "@marko/react-test-utils",
+  "name": "@codexporer.io/react-test-utils",
   "version": "1.0.0",
   "main": "src/index.js",
   "peerDependencies": {
