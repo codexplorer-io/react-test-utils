@@ -4,6 +4,7 @@
   "main": "src/index.js",
   "peerDependencies": {
     "react": "*",
+    "react-dom": "*",
     "enzyme": "*",
     "react-magnetic-di": "*"
   }

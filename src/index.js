@@ -17,7 +17,7 @@ export const createMockComponent = (
 ) => {
     const MockComponent = shouldMockChildComponent ?
         () => {
-        // eslint-disable-next-line lodash/prefer-constant
+            // eslint-disable-next-line lodash/prefer-constant
             const MockComponent = () => null;
             MockComponent.displayName = 'MockComponent';
             return <MockComponent />;
@@ -26,7 +26,7 @@ export const createMockComponent = (
             ({ children }) => children(...renderChildrenArgs) :
             hasChildren ?
                 ({ children }) => children :
-            // eslint-disable-next-line lodash/prefer-constant
+                // eslint-disable-next-line lodash/prefer-constant
                 () => null;
     MockComponent.displayName = displayName;
     return MockComponent;
@@ -38,3 +38,18 @@ export const mountWithDi = (node, { deps = [] } = { deps: [] }) => mount(node, {
         use: deps
     }
 });
+
+export const runHookWithDi = (useHook, { deps = [] } = { deps: [] }) => {
+    const hookRunner = {};
+    const HookRenderer = () => {
+        hookRunner.hookResult = useHook();
+        return null;
+    };
+
+    const wrapper = mountWithDi(<HookRenderer />, { deps });
+    hookRunner.update = () => {
+        wrapper.setProps({});
+    };
+
+    return hookRunner;
+};
