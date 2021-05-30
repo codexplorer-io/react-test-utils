@@ -50,6 +50,9 @@ export const runHookWithDi = (useHook, { deps = [] } = { deps: [] }) => {
     hookRunner.update = () => {
         wrapper.setProps({});
     };
+    hookRunner.unmount = () => {
+        wrapper.unmount();
+    };
 
     return hookRunner;
 };

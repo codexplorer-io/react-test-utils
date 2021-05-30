@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { act } from 'react-dom/test-utils';
 import enzyme from 'enzyme';
 import { DiProvider, di, injectable } from 'react-magnetic-di';
@@ -164,10 +164,14 @@ describe('Test utils', () => {
     });
 
     describe('runHookWithDi', () => {
+        const onUnmount = jest.fn();
+
         const useCounter = (initial = 0) => {
             di(useState);
 
             const [counter, setCounter] = useState(initial);
+
+            useEffect(() => () => onUnmount(), []);
 
             return {
                 counter,
@@ -182,6 +186,7 @@ describe('Test utils', () => {
                 counter: 0,
                 increment: expect.any(Function)
             });
+            expect(onUnmount).not.toHaveBeenCalled();
         });
 
         it('should update hook when state changes', () => {
@@ -200,6 +205,7 @@ describe('Test utils', () => {
             });
 
             expect(result.hookResult.counter).toBe(2);
+            expect(onUnmount).not.toHaveBeenCalled();
         });
 
         it('should pass arguments', () => {
@@ -212,6 +218,7 @@ describe('Test utils', () => {
             });
 
             expect(result.hookResult.counter).toBe(11);
+            expect(onUnmount).not.toHaveBeenCalled();
         });
 
         it('should inject deps', () => {
@@ -225,6 +232,7 @@ describe('Test utils', () => {
             expect(mockUseState).toHaveBeenCalledTimes(1);
             expect(mockUseState).toHaveBeenCalledWith(20);
             expect(result.hookResult.counter).toBe(30);
+            expect(onUnmount).not.toHaveBeenCalled();
         });
 
         it('should rerender when update is called', () => {
@@ -249,6 +257,17 @@ describe('Test utils', () => {
 
             expect(mockUseState).toHaveBeenCalledTimes(2);
             expect(mockUseState).toHaveBeenCalledWith(20);
+            expect(onUnmount).not.toHaveBeenCalled();
+        });
+
+        it('should unmount hook when unmount is called', () => {
+            const result = runHookWithDi(useCounter);
+
+            act(() => {
+                result.unmount();
+            });
+
+            expect(onUnmount).toHaveBeenCalledTimes(1);
         });
     });
 });
