@@ -18,42 +18,60 @@ describe('Test utils', () => {
             const MockComponent = createMockComponent('MyComponent');
 
             expect(MockComponent.displayName).toEqual('MyComponent');
-            expect(MockComponent()).toBe(null);
+            expect(MockComponent({})).toBe(null);
         });
 
-        it('should create empty mock component with display name when hasChildren is false', () => {
-            const MockComponent = createMockComponent('MyComponent', { hasChildren: false });
+        it('should create empty mock component with display name when shouldRenderChildren is false', () => {
+            const MockComponent = createMockComponent('MyComponent', { shouldRenderChildren: false });
 
             expect(MockComponent.displayName).toEqual('MyComponent');
-            expect(MockComponent()).toBe(null);
+            expect(MockComponent({})).toBe(null);
+        });
+
+        it('should create mock component with mock child component', () => {
+            const MockComponent = createMockComponent('MyComponent', { shouldMockChildren: true });
+
+            expect(MockComponent.displayName).toEqual('MyComponent');
+            expect(MockComponent({}).type.displayName).toEqual('MockChildComponent');
         });
 
         it('should create mock component with display name and children', () => {
-            const MockComponent = createMockComponent('MyComponent', { hasChildren: true });
+            const MockComponent = createMockComponent('MyComponent');
 
             expect(MockComponent.displayName).toEqual('MyComponent');
             expect(MockComponent({ children: 'MockChildren' })).toBe('MockChildren');
         });
 
-        it('should create mock component with mock child component', () => {
-            const MockComponent = createMockComponent('MyComponent', { shouldMockChildComponent: true });
+        it('should create mock component with display name without children', () => {
+            const MockComponent = createMockComponent('MyComponent', { shouldRenderChildren: false });
 
             expect(MockComponent.displayName).toEqual('MyComponent');
-            expect(MockComponent().type.displayName).toEqual('MockComponent');
+            expect(MockComponent({ children: 'MockChildren' })).toBe(null);
         });
 
-        it('should create mock renders children component', () => {
+        it('should create mock render children component', () => {
             // eslint-disable-next-line lodash/prefer-constant
             const children = jest.fn().mockReturnValue('MockResult');
 
-            const MockComponent = createMockComponent('MyComponent', { shouldRenderChildren: true });
+            const MockComponent = createMockComponent('MyComponent');
 
             expect(MockComponent.displayName).toEqual('MyComponent');
             expect(MockComponent({ children })).toEqual('MockResult');
             expect(children).toHaveBeenCalledTimes(1);
         });
 
-        it('should create mock renders children component with arguments', () => {
+        it('should not create mock render children component', () => {
+            // eslint-disable-next-line lodash/prefer-constant
+            const children = jest.fn().mockReturnValue('MockResult', { shouldRenderChildren: false });
+
+            const MockComponent = createMockComponent('MyComponent');
+
+            expect(MockComponent.displayName).toEqual('MyComponent');
+            expect(MockComponent({ children })).toEqual('MockResult');
+            expect(children).toHaveBeenCalledTimes(1);
+        });
+
+        it('should create mock render children component with arguments', () => {
             // eslint-disable-next-line lodash/prefer-constant
             const children = jest.fn().mockReturnValue('MockResult');
 

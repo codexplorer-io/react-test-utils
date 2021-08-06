@@ -5,6 +5,7 @@
   "peerDependencies": {
     "react": "*",
     "react-dom": "*",
+    "lodash": "*",
     "enzyme": "*",
     "react-magnetic-di": "*"
   }

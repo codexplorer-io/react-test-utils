@@ -1,33 +1,39 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { DiProvider } from 'react-magnetic-di';
+import isFunction from 'lodash/isFunction';
 
 export const createMockComponent = (
     displayName,
     {
-        hasChildren = false,
-        shouldMockChildComponent = false,
-        shouldRenderChildren = false,
+        shouldRenderChildren = true,
+        shouldMockChildren = false,
         renderChildrenArgs = []
     } = {
-        hasChildren: false,
-        shouldRenderChildren: false,
+        shouldRenderChildren: true,
+        shouldMockChildren: false,
         renderChildrenArgs: []
     }
 ) => {
-    const MockComponent = shouldMockChildComponent ?
-        () => {
-            // eslint-disable-next-line lodash/prefer-constant
-            const MockComponent = () => null;
-            MockComponent.displayName = 'MockComponent';
-            return <MockComponent />;
-        } :
-        shouldRenderChildren ?
-            ({ children }) => children(...renderChildrenArgs) :
-            hasChildren ?
-                ({ children }) => children :
-                // eslint-disable-next-line lodash/prefer-constant
-                () => null;
+    // eslint-disable-next-line lodash/prefer-constant
+    const MockChildComponent = () => null;
+    MockChildComponent.displayName = 'MockChildComponent';
+
+    const MockComponent = ({ children }) => {
+        if (shouldMockChildren) {
+            return <MockChildComponent />;
+        }
+
+        if (!shouldRenderChildren || !children) {
+            return null;
+        }
+
+        if (children && isFunction(children)) {
+            return children(...renderChildrenArgs);
+        }
+
+        return children;
+    };
     MockComponent.displayName = displayName;
     return MockComponent;
 };
