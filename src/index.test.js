@@ -85,6 +85,31 @@ describe('Test utils', () => {
             expect(children).toHaveBeenCalledTimes(1);
             expect(children).toHaveBeenCalledWith('arg1', 'arg2');
         });
+
+        it('should call ref with current ref', () => {
+            const ref = jest.fn();
+
+            const MockComponent = createMockComponent('MyComponent', {
+                mockRef: 'mockRef'
+            });
+
+            expect(MockComponent.displayName).toEqual('MyComponent');
+            expect(MockComponent.render({ children: 'MockChildren' }, ref)).toBe('MockChildren');
+            expect(ref).toHaveBeenCalledTimes(1);
+            expect(ref).toHaveBeenCalledWith('mockRef');
+        });
+
+        it('should set current ref', () => {
+            const ref = { current: null };
+
+            const MockComponent = createMockComponent('MyComponent', {
+                mockRef: 'mockRef'
+            });
+
+            expect(MockComponent.displayName).toEqual('MyComponent');
+            expect(MockComponent.render({ children: 'MockChildren' }, ref)).toBe('MockChildren');
+            expect(ref.current).toBe('mockRef');
+        });
     });
 
     describe('mountWithDi', () => {

@@ -8,18 +8,20 @@ export const createMockComponent = (
     {
         shouldRenderChildren = true,
         shouldMockChildren = false,
-        renderChildrenArgs = []
+        renderChildrenArgs = [],
+        mockRef = undefined
     } = {
         shouldRenderChildren: true,
         shouldMockChildren: false,
-        renderChildrenArgs: []
+        renderChildrenArgs: [],
+        mockRef: undefined
     }
 ) => {
     // eslint-disable-next-line lodash/prefer-constant
     const MockChildComponent = () => null;
     MockChildComponent.displayName = 'MockChildComponent';
 
-    const MockComponent = ({ children }) => {
+    const renderComponent = ({ children }) => {
         if (shouldMockChildren) {
             return <MockChildComponent />;
         }
@@ -34,6 +36,16 @@ export const createMockComponent = (
 
         return children;
     };
+
+    const MockComponent = mockRef ?
+        React.forwardRef(({ children }, ref) => {
+            isFunction(ref) ?
+                ref(mockRef) :
+                (ref.current = mockRef);
+
+            return renderComponent({ children });
+        }) :
+        ({ children }) => renderComponent({ children });
     MockComponent.displayName = displayName;
     return MockComponent;
 };
